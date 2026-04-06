@@ -1,9 +1,9 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { ExpenseInputComponent } from './components/expense-input/expense-input.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [ExpenseInputComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

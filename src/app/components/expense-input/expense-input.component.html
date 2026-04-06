@@ -1,0 +1,27 @@
+<div class="container">
+  <h2>Registre seu Gasto com IA 🤖</h2>
+  <p>Digite como você falaria normalmente.</p>
+
+  <div class="input-group">
+    <input
+      type="text"
+      [formControl]="expenseControl"
+      placeholder="Ex: comprei 50 reais de pão na padaria hoje"
+      (keyup.enter)="onSubmit()"
+      [disabled]="isLoading"
+    />
+    <button (click)="onSubmit()" [disabled]="isLoading">
+      {{ isLoading ? 'Processando...' : 'Enviar' }}
+    </button>
+  </div>
+  
+  <div class="result-card" *ngIf="savedExpense">
+    <h3>✅ Gasto Registrado!</h3>
+    <p><strong>ID no Banco:</strong> {{ savedExpense.id }}</p>
+    <p><strong>Item:</strong> {{ savedExpense.name }}</p>
+    <p><strong>Valor:</strong> R$ {{ savedExpense.value }}</p>
+    <p><strong>Categoria:</strong> <span class="badge">{{ savedExpense.category }}</span></p>
+    <p><strong>Data:</strong> {{ savedExpense.date }}</p>
+    <p *ngIf="savedExpense.paymentType"><strong>Pagamento:</strong> <span class="badge">{{ savedExpense.paymentType }}</span></p>
+  </div>
+</div>
