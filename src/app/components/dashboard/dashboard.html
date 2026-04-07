@@ -1,0 +1,34 @@
+<div class="dashboard-container">
+  <h2>Visão Geral dos Gastos 📊</h2>
+  
+  <div class="summary-card">
+    <h3>Total Gasto</h3>
+    <p class="total-value">R$ {{ totalGasto.toFixed(2) }}</p>
+  </div>
+
+  <table class="expenses-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Data</th>
+        <th>Item</th>
+        <th>Categoria</th>
+        <th>Pagamento</th>
+        <th>Valor (R$)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let expense of expenses">
+        <td>{{ expense.id }}</td>
+        <td>{{ expense.date }}</td>
+        <td>{{ expense.name }}</td>
+        <td><span class="badge">{{ expense.category }}</span></td>
+        <td>{{ expense.paymentType || '-' }}</td>
+        <td class="valor-col">R$ {{ expense.value.toFixed(2) }}</td>
+      </tr>
+      <tr *ngIf="expenses.length === 0">
+        <td colspan="6" class="empty-state">Nenhum gasto registrado ainda.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

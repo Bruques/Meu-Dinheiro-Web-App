@@ -33,6 +33,8 @@ export class ExpenseInputComponent {
           this.savedExpense = result;
           this.isLoading = false;
           this.expenseControl.reset(); // Limpa o campo
+
+          this.expenseService.notifyExpenseAdded;
         },
         error: (err) => {
           console.error('Erro ao processar', err);
