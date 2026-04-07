@@ -15,18 +15,53 @@
         <th>Categoria</th>
         <th>Pagamento</th>
         <th>Valor (R$)</th>
+        <th>Ações</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let expense of expenses">
-        <td data-label="Item">{{ expense.name }}</td>
-        <td data-label="Valor (R$)" class="valor-col">R$ {{ expense.value.toFixed(2) }}</td>
-        <td data-label="Categoria"><span class="badge">{{ expense.category }}</span></td>
-        <td data-label="Pagamento">{{ expense.paymentType || '-' }}</td>
-        <td data-label="Data">{{ expense.date }}</td>
+        
+        <td data-label="Item">
+          <span *ngIf="editandoId !== expense.id">{{ expense.name }}</span>
+          <input *ngIf="editandoId === expense.id" [(ngModel)]="gastoEmEdicao.name" class="edit-input">
+        </td>
+
+        <td data-label="Valor (R$)" class="valor-col">
+          <span *ngIf="editandoId !== expense.id">R$ {{ expense.value.toFixed(2) }}</span>
+          <input *ngIf="editandoId === expense.id" type="number" [(ngModel)]="gastoEmEdicao.value" class="edit-input">
+        </td>
+        
+        <td data-label="Categoria">
+          <span *ngIf="editandoId !== expense.id" class="badge">{{ expense.category }}</span>
+          <input *ngIf="editandoId === expense.id" [(ngModel)]="gastoEmEdicao.category" class="edit-input">
+        </td>
+        
+        <td data-label="Tipo de pagamento">
+          <span *ngIf="editandoId !== expense.id">{{ expense.paymentType || '-' }}</span>
+          <input *ngIf="editandoId === expense.id" [(ngModel)]="gastoEmEdicao.paymentType" class="edit-input" placeholder="ex: pix">
+        </td>
+        
+        
+
+        <td data-label="Data">
+          <span *ngIf="editandoId !== expense.id">{{ expense.date }}</span>
+          <input *ngIf="editandoId === expense.id" [(ngModel)]="gastoEmEdicao.date" class="edit-input">
+        </td>
+
+        <td data-label="Ações">
+          <ng-container *ngIf="editandoId !== expense.id">
+            <button class="action-btn edit-btn" (click)="iniciarEdicao(expense)">✏️</button>
+            <button class="action-btn delete-btn" (click)="excluirGasto(expense.id)">🗑️</button>
+          </ng-container>
+          
+          <ng-container *ngIf="editandoId === expense.id">
+            <button class="action-btn save-btn" (click)="salvarEdicao()">✅</button>
+            <button class="action-btn cancel-btn" (click)="cancelarEdicao()">❌</button>
+          </ng-container>
+        </td>
       </tr>
       <tr *ngIf="expenses.length === 0">
-        <td colspan="6" class="empty-state">Nenhum gasto registrado ainda.</td>
+        <td colspan="7" class="empty-state">Nenhum gasto registrado ainda.</td>
       </tr>
     </tbody>
   </table>

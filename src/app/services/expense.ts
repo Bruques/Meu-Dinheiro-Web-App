@@ -29,6 +29,15 @@ export class ExpenseService {
     return this.http.get<any[]>(this.apiUrl);
   }
 
+  // Adicione abaixo do getExpenses()
+  deleteExpense(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+
+  updateExpense(id: number, expenseData: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, expenseData);
+  }
+
   // Método que dispara a notificação
   notifyExpenseAdded() {
     this.expenseAddedSource.next();

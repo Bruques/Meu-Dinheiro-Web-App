@@ -91,3 +91,31 @@
     font-size: 12px;
   }
 }
+
+/* --- ESTILOS DE EDIÇÃO E AÇÕES --- */
+.action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  margin-right: 10px;
+  padding: 5px;
+  transition: transform 0.2s;
+}
+
+.action-btn:last-child { margin-right: 0; }
+.action-btn:hover { transform: scale(1.2); }
+
+.edit-input {
+  width: 100%;
+  max-width: 150px;
+  padding: 6px 10px;
+  border: 1px solid #007bff;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Garante que o input no celular ocupe o lado direito do card certinho */
+@media (max-width: 768px) {
+  .edit-input { text-align: right; }
+}
