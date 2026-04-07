@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core'; // 1. Adicione o ChangeDetectorRef aqui
 import { CommonModule } from '@angular/common';
 import { ExpenseService } from '../../services/expense';
 
@@ -13,12 +13,16 @@ export class DashboardComponent implements OnInit {
   expenses: any[] = [];
   totalGasto: number = 0;
 
-  constructor(private expenseService: ExpenseService) {}
+  // 2. Injete o ChangeDetectorRef no construtor (cdr)
+  constructor(
+    private expenseService: ExpenseService,
+    private cdr: ChangeDetectorRef 
+  ) {}
 
   ngOnInit() {
     this.carregarGastos();
 
-    // Fica escutando: se alguém avisar, recarrega a tabela automaticamente!
+    // Quando o serviço avisar que um item foi adicionado, recarregamos
     this.expenseService.expenseAdded$.subscribe(() => {
       this.carregarGastos();
     });
@@ -29,6 +33,9 @@ export class DashboardComponent implements OnInit {
       next: (dados) => {
         this.expenses = dados;
         this.calcularTotal();
+        
+        // 3. O SEGREDO: Avisa o Angular explicitamente para atualizar a tela AGORA!
+        this.cdr.detectChanges(); 
       },
       error: (err) => console.error('Erro ao buscar gastos', err)
     });
