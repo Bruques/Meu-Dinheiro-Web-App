@@ -75,3 +75,43 @@ button:disabled {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* Container do Input e Botão */
+.input-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.input-group input {
+  flex: 1; /* O input ocupa o máximo de espaço possível */
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.input-group button {
+  padding: 12px 24px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* --- A MÁGICA DA RESPONSIVIDADE (Celulares) --- */
+@media (max-width: 600px) {
+  .input-group {
+    flex-direction: column; /* Empilha o input e o botão */
+  }
+
+  .input-group button {
+    width: 100%; /* Botão largo para facilitar o toque na tela */
+  }
+
+  .result-card {
+    padding: 15px;
+  }
+}

@@ -19,12 +19,11 @@
     </thead>
     <tbody>
       <tr *ngFor="let expense of expenses">
-        <td>{{ expense.id }}</td>
-        <td>{{ expense.date }}</td>
-        <td>{{ expense.name }}</td>
-        <td><span class="badge">{{ expense.category }}</span></td>
-        <td>{{ expense.paymentType || '-' }}</td>
-        <td class="valor-col">R$ {{ expense.value.toFixed(2) }}</td>
+        <td data-label="Item">{{ expense.name }}</td>
+        <td data-label="Valor (R$)" class="valor-col">R$ {{ expense.value.toFixed(2) }}</td>
+        <td data-label="Categoria"><span class="badge">{{ expense.category }}</span></td>
+        <td data-label="Pagamento">{{ expense.paymentType || '-' }}</td>
+        <td data-label="Data">{{ expense.date }}</td>
       </tr>
       <tr *ngIf="expenses.length === 0">
         <td colspan="6" class="empty-state">Nenhum gasto registrado ainda.</td>
