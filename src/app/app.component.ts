@@ -1,40 +1,14 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common'; // Necessário para o *ngIf
-import { ExpenseInputComponent } from './components/expense-input/expense-input.component';
-import { DashboardComponent } from './components/dashboard/dashboard';
-import { ExpenseService } from './services/expense';
 import { RouterOutlet } from '@angular/router'; // 1. Importe o RouterOutlet
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, ExpenseInputComponent, DashboardComponent],
+  imports: [RouterOutlet, CommonModule],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App implements OnInit {
-  isModalOpen = false;
+export class App {
 
-  constructor(
-    private expenseService: ExpenseService,
-    private cdr: ChangeDetectorRef
-  ) {}
-
-  ngOnInit() {
-    // Escutamos a mesma "buzina" que atualiza a tabela.
-    // Quando a despesa for salva, o modal desce automaticamente!
-    this.expenseService.expenseAdded$.subscribe(() => {
-      console.log("Recebi o aviso! Fechando o modal agora...");
-      this.fecharModal();
-    });
-  }
-
-  abrirModal() { 
-    this.isModalOpen = true; 
-  }
-  
-  fecharModal() { 
-    this.isModalOpen = false; 
-    this.cdr.detectChanges();
-  }
 }

@@ -221,3 +221,101 @@
   width: 100%;
   box-sizing: border-box;
 }
+
+.fab-button {
+  position: fixed; /* Isso garante que ele flutue sobre a tela */
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 50%;
+  border: none;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  cursor: pointer;
+  z-index: 1000; /* Garante que ele fique na frente de tudo */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.fab-icon {
+  font-size: 30px;
+  line-height: 1;
+}
+
+/* Garante que o modal também fique por cima */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* Fundo escuro semi-transparente */
+  backdrop-filter: blur(3px); /* Desfoque estilo iOS */
+  display: flex;
+  justify-content: center;
+  align-items: flex-end; /* Alinha por padrão embaixo (celular) */
+  z-index: 100;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-content {
+  background-color: white;
+  width: 100%;
+  max-width: 600px;
+  padding: 20px;
+  border-radius: 20px 20px 0 0; /* Arredonda só o topo no celular */
+  box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #999;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.main-layout {
+  padding-bottom: 70px;
+}
+
+/* Animações nativas */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+/* Ajuste para Desktop (Centraliza no meio da tela) */
+@media (min-width: 601px) {
+  .modal-overlay { align-items: center; }
+  .modal-content { border-radius: 12px; }
+}

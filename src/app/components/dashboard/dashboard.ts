@@ -1,8 +1,15 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ExpenseService } from '../../services/expense'; // Confirme se o caminho do seu import é esse mesmo
-import { BaseChartDirective } from 'ng2-charts'; // O import do Gráfico!
+import { Router } from '@angular/router'; // Adicionado para redirecionar
+
+// Import dos Serviços e Componentes
+import { ExpenseService } from '../../services/expense'; 
+import { AuthService } from '../../services/auth'; // O Serviço do Firebase
+import { ExpenseInputComponent } from '../expense-input/expense-input.component'; // O Componente do Modal
+
+// Imports do Gráfico
+import { BaseChartDirective } from 'ng2-charts'; 
 import { ChartConfiguration, ChartData, ChartType, Chart, registerables } from 'chart.js';
 
 Chart.register(...registerables);
@@ -10,23 +17,23 @@ Chart.register(...registerables);
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, BaseChartDirective], // BaseChartDirective adicionado aqui!
+  imports: [CommonModule, FormsModule, BaseChartDirective, ExpenseInputComponent], 
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
 export class DashboardComponent implements OnInit {
-  expenses: any[] = [];
-  totalMes: number = 0; // Alterado de totalGasto para refletir o mês
+  // --- VARIÁVEIS DO MODAL ---
+  isModalOpen = false;
 
-  // Controle do Tempo
+  // --- VARIÁVEIS DO DASHBOARD ---
+  expenses: any[] = [];
+  totalMes: number = 0; 
   dataAtual = new Date();
   mesesNomes = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-
-  // Controle de edição (Os seus métodos originais intactos)
   editandoId: number | null = null;
   gastoEmEdicao: any = {};
 
-  // Configuração do Gráfico de Rosca (Doughnut)
+  // Configuração do Gráfico de Rosca
   public pieChartType: ChartType = 'doughnut';
   public pieChartData: ChartData<'doughnut', number[], string | string[]> = {
     labels: [],
@@ -37,18 +44,39 @@ export class DashboardComponent implements OnInit {
   };
   public pieChartOptions: ChartConfiguration['options'] = { responsive: true, maintainAspectRatio: false };
 
-  // O seu construtor já com o ChangeDetectorRef injetado
+  // Construtor atualizado com Auth e Router
   constructor(
     private expenseService: ExpenseService,
-    private cdr: ChangeDetectorRef 
+    private cdr: ChangeDetectorRef,
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit() {
-    this.carregarGastosDoMes(); // Agora carrega por mês
-
-    this.expenseService.expenseAdded$.subscribe(() => {
-      this.carregarGastosDoMes();
+    // 1. O "SEGURANÇA": Verifica se o usuário está logado
+    this.authService.user$.subscribe(user => {
+      if (!user) {
+        this.router.navigate(['/login']); // Expulsa para o login
+      } else {
+        this.carregarGastosDoMes(); // Se tem crachá, carrega os dados
+      }
     });
+
+    // 2. O "OUVIDO DA IA": Escuta quando o modal salva um gasto
+    this.expenseService.expenseAdded$.subscribe(() => {
+      this.fecharModal(); // Desce o modal
+      this.carregarGastosDoMes(); // Atualiza a lista e o gráfico
+    });
+  }
+
+  // --- CONTROLE DO MODAL ---
+  abrirModal() { 
+    this.isModalOpen = true; 
+  }
+  
+  fecharModal() { 
+    this.isModalOpen = false; 
+    this.cdr.detectChanges(); 
   }
 
   // --- NAVEGAÇÃO DE MESES ---
@@ -75,8 +103,6 @@ export class DashboardComponent implements OnInit {
       next: (dados) => {
         this.expenses = dados;
         this.calcularTotaisEGrafico();
-        
-        // Mantemos o seu segredo para evitar erros de renderização!
         this.cdr.detectChanges(); 
       },
       error: (err) => console.error('Erro ao buscar gastos do mês', err)
@@ -102,11 +128,11 @@ export class DashboardComponent implements OnInit {
     this.pieChartData = { ...this.pieChartData }; 
   }
 
-  // --- MÉTODOS DE EDIÇÃO E EXCLUSÃO (Agora recarregam o mês atual) ---
+  // --- MÉTODOS DE EDIÇÃO E EXCLUSÃO ---
   excluirGasto(id: number) {
     if (confirm('Tem certeza que deseja excluir este gasto?')) {
       this.expenseService.deleteExpense(id).subscribe(() => {
-        this.carregarGastosDoMes(); // Atualizado
+        this.carregarGastosDoMes(); 
       });
     }
   }
@@ -125,7 +151,7 @@ export class DashboardComponent implements OnInit {
     if (this.editandoId) {
       this.expenseService.updateExpense(this.editandoId, this.gastoEmEdicao).subscribe(() => {
         this.editandoId = null;
-        this.carregarGastosDoMes(); // Atualizado
+        this.carregarGastosDoMes(); 
       });
     }
   }
