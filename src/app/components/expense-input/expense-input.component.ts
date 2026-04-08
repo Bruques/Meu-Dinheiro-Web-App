@@ -30,11 +30,18 @@ export class ExpenseInputComponent {
       this.expenseService.extractExpense(text).subscribe({
         next: (result) => {
           // Deu certo! O Spring Boot devolveu o dado salvo no banco
+          console.log("Tempo esgotado! Avisando para fechar o modal...");
           this.savedExpense = result;
           this.isLoading = false;
           this.expenseControl.reset(); // Limpa o campo
 
-          this.expenseService.notifyExpenseAdded();
+          setTimeout(() => {
+            // Avisa o app para fechar o modal e atualizar a tabela
+            this.expenseService.notifyExpenseAdded(); 
+            
+            // Limpa a variável do card para o modal abrir "limpo" no futuro
+            this.savedExpense = null; 
+          }, 1500);
         },
         error: (err) => {
           console.error('Erro ao processar', err);

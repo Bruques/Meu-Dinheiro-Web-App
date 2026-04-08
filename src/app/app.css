@@ -1,0 +1,107 @@
+/* --- CABEÇALHO --- */
+.app-header {
+  background-color: #ffffff;
+  padding: 15px 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 20px;
+  color: #333;
+}
+
+/* --- BOTÃO FLUTUANTE (FAB) --- */
+.fab-button {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  border-radius: 30px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.4);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 90;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.fab-button:hover {
+  transform: scale(1.05);
+  background-color: #0056b3;
+}
+
+.fab-icon {
+  font-size: 32px;
+  font-weight: 300;
+  margin-top: -4px; /* Ajuste óptico do ícone de + */
+}
+
+/* --- MODAL / BOTTOM SHEET --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* Fundo escuro semi-transparente */
+  backdrop-filter: blur(3px); /* Desfoque estilo iOS */
+  display: flex;
+  justify-content: center;
+  align-items: flex-end; /* Alinha por padrão embaixo (celular) */
+  z-index: 100;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-content {
+  background-color: white;
+  width: 100%;
+  max-width: 600px;
+  padding: 20px;
+  border-radius: 20px 20px 0 0; /* Arredonda só o topo no celular */
+  box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #999;
+  cursor: pointer;
+  padding: 5px;
+}
+
+/* Animações nativas */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+/* Ajuste para Desktop (Centraliza no meio da tela) */
+@media (min-width: 601px) {
+  .modal-overlay { align-items: center; }
+  .modal-content { border-radius: 12px; }
+}

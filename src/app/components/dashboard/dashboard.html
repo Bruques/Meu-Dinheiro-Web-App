@@ -40,8 +40,6 @@
           <span *ngIf="editandoId !== expense.id">{{ expense.paymentType || '-' }}</span>
           <input *ngIf="editandoId === expense.id" [(ngModel)]="gastoEmEdicao.paymentType" class="edit-input" placeholder="ex: pix">
         </td>
-        
-        
 
         <td data-label="Data">
           <span *ngIf="editandoId !== expense.id">{{ expense.date }}</span>
