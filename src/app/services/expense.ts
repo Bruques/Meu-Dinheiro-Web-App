@@ -29,6 +29,10 @@ export class ExpenseService {
     return this.http.get<any[]>(this.apiUrl);
   }
 
+  getExpensesByMonth(mes: number, ano: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/mes?mes=${mes}&ano=${ano}`);
+  }
+
   // Adicione abaixo do getExpenses()
   deleteExpense(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
