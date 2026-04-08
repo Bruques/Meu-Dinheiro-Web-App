@@ -46,169 +46,178 @@
   text-transform: capitalize;
 }
 
-/* --- 2. RESUMO E GRÁFICO --- */
+/* --- 2. RESUMO E GRÁFICO (Arrumado o bug invisível) --- */
 .summary-section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #f0f8ff; /* Tom azul claro que você já usava */
-  padding: 25px;
+  background: #f0f8ff; 
+  padding: 25px 15px;
   border-radius: 20px;
   border-left: 6px solid #007bff;
   box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-  margin-bottom: 35px;
+  margin-bottom: 30px;
+  gap: 20px; /* Garante espaço entre o texto e o gráfico */
 }
 
 .total-card {
   text-align: center;
-  margin-bottom: 25px;
+  width: 100%;
 }
 
 .total-card p {
   margin: 0;
-  font-size: 13px;
+  font-size: 14px;
   color: #666;
   text-transform: uppercase;
-  letter-spacing: 1.2px;
+  letter-spacing: 1px;
 }
 
 .total-value {
-  margin: 8px 0 0 0;
-  font-size: 36px;
+  margin: 5px 0 0 0;
+  font-size: 38px; /* Valor gigante e lindo no topo */
   color: #007bff;
   font-weight: 800;
 }
 
+/* O SEGREDO DO GRÁFICO: Posição relativa e altura travada */
 .chart-container {
   position: relative;
-  height: 220px;
+  height: 250px; 
   width: 100%;
-  max-width: 280px;
+  max-width: 300px; /* Evita que fique gigante em telas maiores */
+  margin: 0 auto;
 }
 
-/* --- 3. LISTA DE GASTOS (CARDS) --- */
+
+/* --- 3. LISTA DE GASTOS (CARDS MOBILE FIRST) --- */
 .expense-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 15px;
 }
 
 .expense-card {
   background: white;
   border-radius: 16px;
-  padding: 18px;
+  padding: 20px; /* Área de respiro maior para toque */
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.04);
-  border: 1px solid #eee;
-  transition: transform 0.2s;
+  flex-direction: column;
+  gap: 12px; /* Espaço entre as linhas do card */
+  box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+  border: 1px solid #f1f3f5;
 }
 
-.expense-info h4 {
-  margin: 0 0 6px 0;
-  font-size: 17px;
-  color: #222;
+/* Linha 1: Título e Valor */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid #f8f9fa;
+  padding-bottom: 10px;
+}
+
+.item-name {
+  margin: 0;
+  font-size: 18px; /* Título maior */
+  color: #212529;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.item-value {
+  font-size: 20px; /* Valor chamativo */
+  font-weight: 800;
+  color: #d9534f;
+  white-space: nowrap;
+  margin-left: 10px;
+}
+
+/* Linha 2: Badges e Infos */
+.card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.badges-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .category-badge {
-  display: inline-block;
   background-color: #f1f3f5;
   color: #495057;
-  font-size: 11px;
-  padding: 4px 10px;
-  border-radius: 12px;
-  margin-right: 8px;
+  font-size: 13px; /* Fonte mais legível */
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.type-text {
+  font-size: 13px;
+  color: #868e96;
+  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .date-badge {
   display: inline-block;
   background-color: #e6f9ed;
   color: #179344;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 12px;
+  padding: 5px 12px;
+  border-radius: 8px;
+  align-self: flex-start; /* Alinha à esquerda */
+}
+
+/* Linha 3: Rodapé com Ações */
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 5px;
 }
 
 .date-small {
-  font-size: 11px;
-  color: #adb5bd;
-  margin-top: 8px;
-}
-
-/* --- VALORES E AÇÕES --- */
-.expense-actions-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 12px;
-}
-
-.expense-value-type {
-  text-align: right;
-}
-
-.value {
-  display: block;
-  font-size: 18px;
-  font-weight: 700;
-  color: #d9534f; /* Cor avermelhada para gastos */
-}
-
-.type {
   font-size: 12px;
-  color: #868e96;
-  text-transform: lowercase;
+  color: #adb5bd;
 }
 
 .action-buttons {
   display: flex;
-  gap: 10px;
+  gap: 15px; /* Botões mais espaçados para não errar o clique no celular */
 }
 
 .action-btn {
-  background: none;
-  border: none;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
   cursor: pointer;
   font-size: 18px;
-  padding: 6px;
-  border-radius: 8px;
-  transition: background 0.2s, transform 0.1s;
+  padding: 8px 12px;
+  border-radius: 10px;
 }
 
-.action-btn:hover {
-  background-color: #f8f9fa;
-  transform: scale(1.1);
+/* --- MODO EDIÇÃO MOBILE --- */
+.edit-mode-grid label {
+  font-size: 12px;
+  color: #868e96;
+  margin-bottom: -5px;
+  display: block;
 }
 
-/* --- MODO DE EDIÇÃO --- */
-.edit-mode-grid {
+.edit-row {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-  width: 100%;
+  gap: 10px;
 }
 
 .edit-input {
-  padding: 10px 14px;
-  border: 1px solid #dee2e6;
+  padding: 12px; /* Input bem maior para o dedo no celular */
+  border: 1px solid #ced4da;
   border-radius: 10px;
-  font-size: 14px;
+  font-size: 16px; /* Evita que o iPhone dê zoom automático na tela */
   width: 100%;
   box-sizing: border-box;
 }
-
-.edit-input:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
-}
-
-.edit-actions-buttons {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-}
-
-.save-btn { background-

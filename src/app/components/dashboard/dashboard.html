@@ -11,8 +11,13 @@
       <p>Total a Pagar no Mês</p>
       <h3 class="total-value">R$ {{ totalMes | number:'1.2-2' }}</h3>
     </div>
+    
     <div class="chart-container">
-      <canvas baseChart [data]="pieChartData" [options]="pieChartOptions" [type]="pieChartType"></canvas>
+      <canvas baseChart 
+        [data]="pieChartData" 
+        [options]="pieChartOptions" 
+        [type]="pieChartType">
+      </canvas>
     </div>
   </div>
 
@@ -26,36 +31,50 @@
     <div class="expense-card" *ngFor="let item of expenses">
       
       <ng-container *ngIf="editandoId !== item.id">
-        <div class="expense-info">
-          <h4>{{ item.name }}</h4>
-          <span class="category-badge">{{ item.category }}</span>
-          <span class="date-badge">💸 Sai em: {{ item.dataCobranca | date:'dd/MM' }}</span>
-          <div class="date-small">Comprado: {{ item.date }}</div>
+        
+        <div class="card-header">
+          <h4 class="item-name">{{ item.name }}</h4>
+          <span class="item-value">R$ {{ item.value | number:'1.2-2' }}</span>
+        </div>
+
+        <div class="card-meta">
+          <div class="badges-group">
+            <span class="category-badge">{{ item.category }}</span>
+            <span class="type-text">{{ item.paymentType || '-' }}</span>
+          </div>
+          <span class="date-badge">💸 Cobrança: {{ item.dataCobranca | date:'dd/MM/yyyy':'UTC' }}</span>
         </div>
         
-        <div class="expense-actions-wrapper">
-          <div class="expense-value-type">
-            <span class="value">R$ {{ item.value | number:'1.2-2' }}</span>
-            <span class="type">{{ item.paymentType || '-' }}</span>
-          </div>
+        <div class="card-footer">
+          <div class="date-small">Comprado em: {{ item.date | date:'dd/MM/yyyy':'UTC' }}</div>
           <div class="action-buttons">
             <button class="action-btn edit-btn" (click)="iniciarEdicao(item)">✏️</button>
             <button class="action-btn delete-btn" (click)="excluirGasto(item.id)">🗑️</button>
           </div>
         </div>
+        
       </ng-container>
 
       <ng-container *ngIf="editandoId === item.id">
         <div class="edit-mode-grid">
-          <input [(ngModel)]="gastoEmEdicao.name" placeholder="Item" class="edit-input">
-          <input type="number" [(ngModel)]="gastoEmEdicao.value" placeholder="Valor (R$)" class="edit-input">
-          <input [(ngModel)]="gastoEmEdicao.category" placeholder="Categoria" class="edit-input">
-          <input [(ngModel)]="gastoEmEdicao.paymentType" placeholder="Pagamento" class="edit-input">
-          <input [(ngModel)]="gastoEmEdicao.date" placeholder="Data (dd/MM/yyyy)" class="edit-input">
+          <label>Item e Valor</label>
+          <div class="edit-row">
+            <input [(ngModel)]="gastoEmEdicao.name" placeholder="Item" class="edit-input" style="flex: 2;">
+            <input type="number" [(ngModel)]="gastoEmEdicao.value" placeholder="R$" class="edit-input" style="flex: 1;">
+          </div>
+          
+          <label>Categoria e Tipo</label>
+          <div class="edit-row">
+            <input [(ngModel)]="gastoEmEdicao.category" placeholder="Categoria" class="edit-input">
+            <input [(ngModel)]="gastoEmEdicao.paymentType" placeholder="Crédito, Pix..." class="edit-input">
+          </div>
+
+          <label>Data da Compra</label>
+          <input [(ngModel)]="gastoEmEdicao.date" placeholder="yyyy-MM-dd" class="edit-input">
           
           <div class="edit-actions-buttons">
-            <button class="action-btn save-btn" (click)="salvarEdicao()">✅ Salvar</button>
-            <button class="action-btn cancel-btn" (click)="cancelarEdicao()">❌ Cancelar</button>
+            <button class="save-btn" (click)="salvarEdicao()">✅ Salvar</button>
+            <button class="cancel-btn" (click)="cancelarEdicao()">❌</button>
           </div>
         </div>
       </ng-container>

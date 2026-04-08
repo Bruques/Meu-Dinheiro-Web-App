@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common'; // Necessário para o *ngIf
 import { ExpenseInputComponent } from './components/expense-input/expense-input.component';
 import { DashboardComponent } from './components/dashboard/dashboard';
 import { ExpenseService } from './services/expense';
+import { RouterOutlet } from '@angular/router'; // 1. Importe o RouterOutlet
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, ExpenseInputComponent, DashboardComponent],
+  imports: [RouterOutlet, CommonModule, ExpenseInputComponent, DashboardComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
