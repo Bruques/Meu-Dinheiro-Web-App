@@ -24,15 +24,16 @@
     </div>
   </div>
 
-  <div class="result-card" *ngIf="savedExpense">
-    <h3>✅ Gasto Registrado!</h3>
-    <p><strong>ID no Banco:</strong> {{ savedExpense.id }}</p>
-    <p><strong>Item:</strong> {{ savedExpense.name }}</p>
-    <p><strong>Valor:</strong> R$ {{ savedExpense.value }}</p>
-    <p><strong>Categoria:</strong> <span class="badge">{{ savedExpense.category }}</span></p>
-    <p><strong>Data:</strong> {{ savedExpense.date }}</p>
-    <p *ngIf="savedExpense.paymentType">
-      <strong>Pagamento:</strong> <span class="badge">{{ savedExpense.paymentType }}</span>
-    </p>
+  <div *ngIf="savedExpenses.length > 0" class="resultados-lote">
+    <h3>✅ {{ savedExpenses.length }} Gastos Registrados!</h3>
+    
+    <div class="result-card" *ngFor="let exp of savedExpenses">
+      <p><strong>Item:</strong> {{ exp.name }}</p>
+      <p><strong>Valor:</strong> R$ {{ exp.value }}</p>
+      <p><strong>Categoria:</strong> <span class="badge">{{ exp.category }}</span></p>
+      <p *ngIf="exp.paymentType">
+        <strong>Pagamento:</strong> <span class="badge">{{ exp.paymentType }}</span>
+      </p>
+    </div>
   </div>
 </div>

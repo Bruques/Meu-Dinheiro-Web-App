@@ -16,7 +16,7 @@ declare var SpeechRecognition: any;
 export class ExpenseInputComponent {
   expenseControl = new FormControl(''); // O dono oficial do texto
   isLoading = false;
-  savedExpense: any = null;
+  savedExpenses: any[] = [];
   isRecording: boolean = false;
 
   // Adicionamos o NgZone aqui no construtor
@@ -31,18 +31,18 @@ export class ExpenseInputComponent {
 
     if (text && text.trim() !== '') {
       this.isLoading = true;
-      this.savedExpense = null;
+      this.savedExpenses = [];
 
       this.expenseService.extractExpense(text).subscribe({
-        next: (result) => {
-          this.savedExpense = result;
+        next: (result: any[]) => {
+          this.savedExpenses = result;
           this.isLoading = false;
           this.expenseControl.reset();
 
           setTimeout(() => {
             this.expenseService.notifyExpenseAdded();
-            this.savedExpense = null;
-          }, 1500);
+            this.savedExpenses = [];
+          }, 3000);
         },
         error: (err) => {
           console.error('Erro ao processar', err);

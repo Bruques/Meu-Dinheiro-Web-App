@@ -127,4 +127,6 @@ button:disabled {
   .result-card {
     padding: 15px;
   }
+
+  .resultados-lote .result-card { margin-top: 10px; }
 }
