@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ExpenseService {
   // A URL do nosso Spring Boot
-  private apiUrl = 'https://meu-dinheiro-backend-production.up.railway.app/api/expenses';
+  private apiUrl = `${environment.apiUrl}/expenses`;
 
   // O "transmissor" do aviso
   private expenseAddedSource = new Subject<void>();
