@@ -1,3 +1,19 @@
+<header class="app-header">
+  <div class="brand-container">
+    <h2>💸 MeuDinheiro</h2>
+  </div>
+  
+  <div class="user-container">
+    <div class="avatar" *ngIf="usuarioEmail">
+      {{ usuarioEmail.charAt(0) | uppercase }}
+    </div>
+    
+    <button class="btn-logout" (click)="fazerLogout()">
+      <span class="logout-icon">Sair</span>
+    </button>
+  </div>
+</header>
+
 <div class="dashboard-container">
   
   <div class="month-selector">

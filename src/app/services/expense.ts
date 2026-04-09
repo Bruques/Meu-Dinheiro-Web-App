@@ -7,7 +7,7 @@ import { Observable, Subject } from 'rxjs';
 })
 export class ExpenseService {
   // A URL do nosso Spring Boot
-  private apiUrl = 'http://localhost:8080/api/expenses';
+  private apiUrl = 'https://meu-dinheiro-backend-production.up.railway.app/api/expenses';
 
   // O "transmissor" do aviso
   private expenseAddedSource = new Subject<void>();

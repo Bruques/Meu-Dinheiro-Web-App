@@ -33,6 +33,8 @@ export class DashboardComponent implements OnInit {
   editandoId: number | null = null;
   gastoEmEdicao: any = {};
 
+  usuarioEmail: string | null = '';
+
   // Configuração do Gráfico de Rosca
   public pieChartType: ChartType = 'doughnut';
   public pieChartData: ChartData<'doughnut', number[], string | string[]> = {
@@ -58,6 +60,7 @@ export class DashboardComponent implements OnInit {
       if (!user) {
         this.router.navigate(['/login']); // Expulsa para o login
       } else {
+        this.usuarioEmail = user.email;
         this.carregarGastosDoMes(); // Se tem crachá, carrega os dados
       }
     });
@@ -155,4 +158,13 @@ export class DashboardComponent implements OnInit {
       });
     }
   }
+
+  async fazerLogout() {
+  try {
+    await this.authService.logout(); // O seu serviço já tem esse método!
+    this.router.navigate(['/login']); // Manda de volta pra tela azul
+  } catch (error) {
+    console.error("Erro ao sair", error);
+  }
+}
 }
