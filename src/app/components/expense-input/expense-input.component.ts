@@ -39,14 +39,19 @@ export class ExpenseInputComponent {
           this.isLoading = false;
           this.expenseControl.reset();
 
+          this.cdr.detectChanges();
+
           setTimeout(() => {
             this.expenseService.notifyExpenseAdded();
             this.savedExpenses = [];
-          }, 3000);
+
+            this.cdr.detectChanges();
+          }, 2000);
         },
         error: (err) => {
           console.error('Erro ao processar', err);
           this.isLoading = false;
+          this.cdr.detectChanges();
           alert('Ops! Ocorreu um erro na comunicação com a IA.');
         }
       });
