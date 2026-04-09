@@ -1,46 +1,47 @@
-import { Component } from '@angular/core';
+import { Component, NgZone, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormControl } from '@angular/forms';
-import { ExpenseService } from '../../services/expense'; // Importamos o serviço
+import { FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
+import { ExpenseService } from '../../services/expense';
+
+declare var webkitSpeechRecognition: any;
+declare var SpeechRecognition: any;
 
 @Component({
   selector: 'app-expense-input',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './expense-input.component.html',
   styleUrl: './expense-input.component.css'
 })
 export class ExpenseInputComponent {
-  expenseControl = new FormControl('');
-  isLoading = false; // Controla se estamos esperando a IA
-  savedExpense: any = null; // Guarda o gasto salvo para mostrar na tela
+  expenseControl = new FormControl(''); // O dono oficial do texto
+  isLoading = false;
+  savedExpense: any = null;
+  isRecording: boolean = false;
 
-  // Injetamos o serviço no construtor
-  constructor(private expenseService: ExpenseService) {}
+  // Adicionamos o NgZone aqui no construtor
+  constructor(
+    private expenseService: ExpenseService,
+    private ngZone: NgZone,
+    private cdr: ChangeDetectorRef
+  ) { }
 
   onSubmit() {
     const text = this.expenseControl.value;
-    
-    // Verifica se o texto não está vazio
+
     if (text && text.trim() !== '') {
       this.isLoading = true;
       this.savedExpense = null;
 
-      // Chama a nossa API via serviço (assina o Observable)
       this.expenseService.extractExpense(text).subscribe({
         next: (result) => {
-          // Deu certo! O Spring Boot devolveu o dado salvo no banco
-          console.log("Tempo esgotado! Avisando para fechar o modal...");
           this.savedExpense = result;
           this.isLoading = false;
-          this.expenseControl.reset(); // Limpa o campo
+          this.expenseControl.reset();
 
           setTimeout(() => {
-            // Avisa o app para fechar o modal e atualizar a tabela
-            this.expenseService.notifyExpenseAdded(); 
-            
-            // Limpa a variável do card para o modal abrir "limpo" no futuro
-            this.savedExpense = null; 
+            this.expenseService.notifyExpenseAdded();
+            this.savedExpense = null;
           }, 1500);
         },
         error: (err) => {
@@ -50,5 +51,57 @@ export class ExpenseInputComponent {
         }
       });
     }
+  }
+
+  iniciarGravacao() {
+    const SpeechRecognitionReference = webkitSpeechRecognition || SpeechRecognition;
+
+    if (!SpeechRecognitionReference) {
+      alert('Seu navegador não suporta gravação de áudio por aqui. Tente usar o Chrome!');
+      return;
+    }
+
+    const recognition = new SpeechRecognitionReference();
+    recognition.lang = 'pt-BR';
+    recognition.interimResults = false;
+
+    recognition.onstart = () => {
+      this.ngZone.run(() => {
+        this.isRecording = true;
+        this.cdr.detectChanges();
+      });
+    };
+
+    recognition.onresult = (event: any) => {
+      const textoFalado = event.results[0][0].transcript;
+
+      this.ngZone.run(() => {
+        // 1. MÁGICA DA UX: Desliga a gravação imediatamente!
+        // Isso faz o botão parar de piscar na hora.
+        this.isRecording = false;
+        this.cdr.detectChanges();
+        // 2. Coloca o texto falado dentro do campo de texto
+        this.expenseControl.setValue(textoFalado);
+
+        // 3. Chama o onSubmit direto! O usuário não precisa clicar em enviar.
+        // O onSubmit vai setar o isLoading = true, mudando o botão para "Processando..."
+        this.onSubmit();
+      });
+    };
+
+    recognition.onerror = (event: any) => {
+      console.error('Erro ao gravar: ', event.error);
+      this.ngZone.run(() => { this.isRecording = false; });
+    };
+
+    recognition.onend = () => {
+      // Fallback de segurança: se a pessoa não falar nada e o tempo acabar, ele desliga.
+      this.ngZone.run(() => {
+         this.isRecording = false; 
+         this.cdr.detectChanges();
+        });
+    };
+
+    recognition.start();
   }
 }

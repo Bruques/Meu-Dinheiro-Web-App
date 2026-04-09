@@ -8,28 +8,35 @@
 h2 { color: #333; }
 p { color: #666; margin-bottom: 30px; }
 
-.input-group {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-}
-
-input {
-  flex: 1;
+/* 1. Estilos do Textarea (Substituiu o antigo input) */
+textarea {
+  width: 100%;
   padding: 16px;
   font-size: 16px;
   border: 2px solid #e0e0e0;
   border-radius: 12px;
   outline: none;
   transition: border-color 0.3s;
+  resize: none; /* Impede de redimensionar e quebrar o layout */
+  font-family: inherit;
+  box-sizing: border-box; /* Garante que o padding não estoure a largura no celular */
 }
 
-input:focus {
+textarea:focus {
   border-color: #007bff;
 }
 
+/* 2. Container para alinhar os botões lado a lado */
+.botoes-acao {
+  display: flex;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+/* 3. Estilos gerais dos botões */
 button {
-  padding: 16px 32px;
+  flex: 1; /* Faz os botões dividirem o espaço igualmente (50/50) */
+  padding: 16px 20px;
   font-size: 16px;
   font-weight: bold;
   background-color: #007bff;
@@ -37,11 +44,18 @@ button {
   border: none;
   border-radius: 12px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.1s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-button:hover {
+button:hover:not(:disabled) {
   background-color: #0056b3;
+}
+
+button:active:not(:disabled) {
+  transform: scale(0.98); /* Dá um efeitinho de clique */
 }
 
 button:disabled {
@@ -49,6 +63,30 @@ button:disabled {
   cursor: not-allowed;
 }
 
+/* Destaque para o botão de microfone */
+.btn-microfone {
+  background-color: #28a745; /* Verde para destacar do botão azul de texto */
+}
+
+.btn-microfone:hover:not(:disabled) {
+  background-color: #218838;
+}
+
+/* Animação para o botão gravando pulsar! */
+.btn-microfone.gravando {
+  background-color: #ff4444; /* Vermelho de gravação */
+  color: white;
+  animation: pulse 1.5s infinite;
+  border: none;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7); }
+  70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(255, 68, 68, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 68, 68, 0); }
+}
+
+/* 4. Estilos do Card de Resultado */
 .result-card {
   margin-top: 30px;
   padding: 20px;
@@ -76,38 +114,13 @@ button:disabled {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Container do Input e Botão */
-.input-group {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.input-group input {
-  flex: 1; /* O input ocupa o máximo de espaço possível */
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-}
-
-.input-group button {
-  padding: 12px 24px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
 /* --- A MÁGICA DA RESPONSIVIDADE (Celulares) --- */
 @media (max-width: 600px) {
-  .input-group {
-    flex-direction: column; /* Empilha o input e o botão */
+  .botoes-acao {
+    flex-direction: column; /* No celular, empilha os botões um em cima do outro */
   }
-
-  .input-group button {
+  
+  button {
     width: 100%; /* Botão largo para facilitar o toque na tela */
   }
 

@@ -1,20 +1,29 @@
 <div class="container">
   <h2>Registre seu Gasto com IA 🤖</h2>
-  <p>Digite como você falaria normalmente.</p>
+  <p>Fale ou digite como você faria normalmente.</p>
 
-  <div class="input-group">
-    <input
-      type="text"
-      [formControl]="expenseControl"
-      placeholder="Ex: comprei 50 reais de pão na padaria hoje"
-      (keyup.enter)="onSubmit()"
-      [disabled]="isLoading"
-    />
-    <button (click)="onSubmit()" [disabled]="isLoading">
-      {{ isLoading ? 'Processando...' : 'Enviar' }}
-    </button>
+  <div class="entrada-ia-container">
+
+    <textarea [formControl]="expenseControl" placeholder="Ex: comprei 50 reais de pão na padaria hoje no pix"
+      (keyup.enter)="onSubmit()" [disabled]="isLoading || isRecording" rows="3"></textarea>
+
+    <div class="botoes-acao">
+
+      <button type="button" (click)="iniciarGravacao()" [class.gravando]="isRecording" [disabled]="isLoading"
+        class="btn-microfone">
+        <span *ngIf="!isRecording">🎙️ Falar Gasto</span>
+        <span *ngIf="isRecording">🔴 Ouvindo... (fale agora)</span>
+      </button>
+
+      <button type="button" (click)="onSubmit()" [disabled]="isLoading || isRecording || !expenseControl.value"
+        class="btn-enviar">
+        <span *ngIf="!isLoading">Enviar Texto</span>
+        <span *ngIf="isLoading">⏳ Processando...</span>
+      </button>
+
+    </div>
   </div>
-  
+
   <div class="result-card" *ngIf="savedExpense">
     <h3>✅ Gasto Registrado!</h3>
     <p><strong>ID no Banco:</strong> {{ savedExpense.id }}</p>
@@ -22,6 +31,8 @@
     <p><strong>Valor:</strong> R$ {{ savedExpense.value }}</p>
     <p><strong>Categoria:</strong> <span class="badge">{{ savedExpense.category }}</span></p>
     <p><strong>Data:</strong> {{ savedExpense.date }}</p>
-    <p *ngIf="savedExpense.paymentType"><strong>Pagamento:</strong> <span class="badge">{{ savedExpense.paymentType }}</span></p>
+    <p *ngIf="savedExpense.paymentType">
+      <strong>Pagamento:</strong> <span class="badge">{{ savedExpense.paymentType }}</span>
+    </p>
   </div>
 </div>
