@@ -4,12 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router'; // Adicionado para redirecionar
 
 // Import dos Serviços e Componentes
-import { ExpenseService } from '../../services/expense'; 
+import { ExpenseService } from '../../services/expense';
 import { AuthService } from '../../services/auth'; // O Serviço do Firebase
 import { ExpenseInputComponent } from '../expense-input/expense-input.component'; // O Componente do Modal
+import { BackendService } from '../../services/backend.service'; // Ajuste o caminho
 
 // Imports do Gráfico
-import { BaseChartDirective } from 'ng2-charts'; 
+import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType, Chart, registerables } from 'chart.js';
 
 Chart.register(...registerables);
@@ -17,7 +18,7 @@ Chart.register(...registerables);
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, BaseChartDirective, ExpenseInputComponent], 
+  imports: [CommonModule, FormsModule, BaseChartDirective, ExpenseInputComponent],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
@@ -27,7 +28,7 @@ export class DashboardComponent implements OnInit {
 
   // --- VARIÁVEIS DO DASHBOARD ---
   expenses: any[] = [];
-  totalMes: number = 0; 
+  totalMes: number = 0;
   dataAtual = new Date();
   mesesNomes = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
   editandoId: number | null = null;
@@ -35,12 +36,18 @@ export class DashboardComponent implements OnInit {
 
   usuarioEmail: string | null = '';
 
+  // Variáveis novas para o WhatsApp
+  usuarioFirebaseUid: string | null = null;
+  temWhatsappVinculado: boolean = true; // Assumimos true até o servidor dizer que é false
+  codigoGerado: string | null = null;
+  carregandoWhatsapp = false;
+
   // Configuração do Gráfico de Rosca
   public pieChartType: ChartType = 'doughnut';
   public pieChartData: ChartData<'doughnut', number[], string | string[]> = {
     labels: [],
-    datasets: [{ 
-      data: [], 
+    datasets: [{
+      data: [],
       backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40']
     }]
   };
@@ -51,10 +58,22 @@ export class DashboardComponent implements OnInit {
     private expenseService: ExpenseService,
     private cdr: ChangeDetectorRef,
     private authService: AuthService,
+    private backendService: BackendService, // Adicionado
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
+    this.authService.user$.subscribe(user => {
+      if (!user) {
+        this.router.navigate(['/login']);
+      } else {
+        this.usuarioEmail = user.email;
+        this.usuarioFirebaseUid = user.uid; // Guarda o UID
+        this.verificarVínculoWhatsapp(user.uid); // Checa no servidor
+        this.carregarGastosDoMes();
+      }
+    });
+
     // 1. O "SEGURANÇA": Verifica se o usuário está logado
     this.authService.user$.subscribe(user => {
       if (!user) {
@@ -73,19 +92,19 @@ export class DashboardComponent implements OnInit {
   }
 
   // --- CONTROLE DO MODAL ---
-  abrirModal() { 
-    this.isModalOpen = true; 
+  abrirModal() {
+    this.isModalOpen = true;
   }
-  
-  fecharModal() { 
-    this.isModalOpen = false; 
-    this.cdr.detectChanges(); 
+
+  fecharModal() {
+    this.isModalOpen = false;
+    this.cdr.detectChanges();
   }
 
   // --- NAVEGAÇÃO DE MESES ---
   mudarMes(delta: number) {
     this.dataAtual.setMonth(this.dataAtual.getMonth() + delta);
-    this.dataAtual = new Date(this.dataAtual); 
+    this.dataAtual = new Date(this.dataAtual);
     this.carregarGastosDoMes();
   }
 
@@ -99,14 +118,14 @@ export class DashboardComponent implements OnInit {
 
   // --- BUSCA E MATEMÁTICA ---
   carregarGastosDoMes() {
-    const mesJava = this.dataAtual.getMonth() + 1; 
+    const mesJava = this.dataAtual.getMonth() + 1;
     const anoJava = this.dataAtual.getFullYear();
 
     this.expenseService.getExpensesByMonth(mesJava, anoJava).subscribe({
       next: (dados) => {
         this.expenses = dados;
         this.calcularTotaisEGrafico();
-        this.cdr.detectChanges(); 
+        this.cdr.detectChanges();
       },
       error: (err) => console.error('Erro ao buscar gastos do mês', err)
     });
@@ -118,7 +137,7 @@ export class DashboardComponent implements OnInit {
 
     this.expenses.forEach(exp => {
       this.totalMes += exp.value;
-      
+
       if (categoriasMapa[exp.category]) {
         categoriasMapa[exp.category] += exp.value;
       } else {
@@ -128,21 +147,21 @@ export class DashboardComponent implements OnInit {
 
     this.pieChartData.labels = Object.keys(categoriasMapa);
     this.pieChartData.datasets[0].data = Object.values(categoriasMapa);
-    this.pieChartData = { ...this.pieChartData }; 
+    this.pieChartData = { ...this.pieChartData };
   }
 
   // --- MÉTODOS DE EDIÇÃO E EXCLUSÃO ---
   excluirGasto(id: number) {
     if (confirm('Tem certeza que deseja excluir este gasto?')) {
       this.expenseService.deleteExpense(id).subscribe(() => {
-        this.carregarGastosDoMes(); 
+        this.carregarGastosDoMes();
       });
     }
   }
 
   iniciarEdicao(expense: any) {
     this.editandoId = expense.id;
-    this.gastoEmEdicao = { ...expense }; 
+    this.gastoEmEdicao = { ...expense };
   }
 
   cancelarEdicao() {
@@ -154,17 +173,44 @@ export class DashboardComponent implements OnInit {
     if (this.editandoId) {
       this.expenseService.updateExpense(this.editandoId, this.gastoEmEdicao).subscribe(() => {
         this.editandoId = null;
-        this.carregarGastosDoMes(); 
+        this.carregarGastosDoMes();
       });
     }
   }
 
   async fazerLogout() {
-  try {
-    await this.authService.logout(); // O seu serviço já tem esse método!
-    this.router.navigate(['/login']); // Manda de volta pra tela azul
-  } catch (error) {
-    console.error("Erro ao sair", error);
+    try {
+      await this.authService.logout(); // O seu serviço já tem esse método!
+      this.router.navigate(['/login']); // Manda de volta pra tela azul
+    } catch (error) {
+      console.error("Erro ao sair", error);
+    }
   }
-}
+
+  verificarVínculoWhatsapp(uid: string) {
+    this.backendService.verificarSeTemWhatsapp(uid).subscribe({
+      next: (temVinculo) => {
+        this.temWhatsappVinculado = temVinculo;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Erro ao checar whatsapp', err)
+    });
+  }
+
+  vincularWhatsapp() {
+    if (this.usuarioFirebaseUid && this.usuarioEmail) {
+      this.carregandoWhatsapp = true;
+      this.backendService.gerarCodigoWhatsapp(this.usuarioFirebaseUid, this.usuarioEmail).subscribe({
+        next: (codigo) => {
+          this.codigoGerado = codigo;
+          this.carregandoWhatsapp = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Erro ao gerar código', err);
+          this.carregandoWhatsapp = false;
+        }
+      });
+    }
+  }
 }
