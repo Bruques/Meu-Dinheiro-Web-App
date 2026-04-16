@@ -16,22 +16,32 @@
 
 <div class="dashboard-container">
 
-  <div class="whatsapp-card" *ngIf="!temWhatsappVinculado" style="background-color: #e8f5e9; border: 1px solid #c8e6c9; padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
-    <h3 style="color: #2e7d32; margin-top: 0;">🤖 Inteligência Artificial no WhatsApp</h3>
-    <p>Envie áudios ou textos com seus gastos diretamente pelo WhatsApp e veja-os aparecerem aqui!</p>
+  <div class="whatsapp-card modern-wa-card" *ngIf="!temWhatsappVinculado">
+    <div class="wa-header">
+      <span class="wa-icon">💬</span>
+      <h3>Inteligência Artificial no WhatsApp</h3>
+    </div>
+    <p class="wa-subtitle">Envie áudios ou textos com seus gastos diretamente pelo WhatsApp e veja-os aparecerem aqui!</p>
   
     <button 
       *ngIf="!codigoGerado" 
       (click)="vincularWhatsapp()" 
       [disabled]="carregandoWhatsapp"
-      style="background-color: #25D366; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
-      {{ carregandoWhatsapp ? 'Gerando...' : 'Vincular meu WhatsApp' }}
+      class="btn-gerar-wa">
+      {{ carregandoWhatsapp ? 'Gerando código...' : 'Vincular meu WhatsApp' }}
     </button>
   
-    <div *ngIf="codigoGerado" style="margin-top: 15px; background-color: #ffffff; padding: 15px; border-radius: 8px; border: 1px dashed #25D366;">
-      <p style="margin: 0; color: #555;">Envie a mensagem abaixo para o número do robô:</p>
-      <h1 style="letter-spacing: 5px; color: #2e7d32; margin: 10px 0;">{{ codigoGerado }}</h1>
-      <p style="font-size: 12px; color: #777; margin: 0;">O card sumirá assim que o vínculo for confirmado.</p>
+    <div *ngIf="codigoGerado" class="wa-code-area">
+      <p class="wa-instruction">Seu código de segurança único é:</p>
+      <h1 class="wa-code">{{ codigoGerado }}</h1>
+      
+      <a [href]="'https://wa.me/553599861016?text=' + codigoGerado" 
+         target="_blank" 
+         class="btn-abrir-wa">
+         Abrir WhatsApp e Enviar Código 🚀
+      </a>
+      
+      <p class="wa-footer-text">O card sumirá assim que o vínculo for confirmado.</p>
     </div>
   </div>
   
