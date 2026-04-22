@@ -41,6 +41,12 @@ export class LoginComponent {
       // Se deu tudo certo, pega o Token VIP e vai pro Dashboard!
       const token = await this.authService.getToken();
       console.log('Login Sucesso! Meu Token JWT é:', token);
+
+      if (token) {
+        await this.authService.syncUser(token);
+        console.log('Banco de dados sincronizado com sucesso!');
+      }
+
       this.router.navigate(['/dashboard']);
       
     } catch (error: any) {
