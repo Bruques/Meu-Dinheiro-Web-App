@@ -4,7 +4,10 @@
   </div>
   
   <div class="user-container">
-    <div class="avatar" *ngIf="usuarioEmail">
+    <div class="avatar avatar-clickable" 
+         *ngIf="usuarioEmail" 
+         routerLink="/settings"
+         title="Configurações da Conta">
       {{ usuarioEmail.charAt(0) | uppercase }}
     </div>
     

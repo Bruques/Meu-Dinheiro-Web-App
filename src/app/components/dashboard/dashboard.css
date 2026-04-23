@@ -467,6 +467,17 @@
   margin: 15px 0 0 0;
 }
 
+/* Estilo para mostrar que o avatar é um botão agora */
+.avatar-clickable {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.avatar-clickable:hover {
+  transform: scale(1.1); /* Dá uma leve crescida */
+  box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3); /* Coloca uma sombra verde */
+}
+
 /* Animações nativas */
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }

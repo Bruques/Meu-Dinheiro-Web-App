@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router'; // Adicionado para redirecionar
+import { Router, RouterLink } from '@angular/router';
 
 // Import dos Serviços e Componentes
 import { ExpenseService } from '../../services/expense';
@@ -18,7 +18,7 @@ Chart.register(...registerables);
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, BaseChartDirective, ExpenseInputComponent],
+  imports: [CommonModule, FormsModule, BaseChartDirective, ExpenseInputComponent, RouterLink],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })

@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class AuthService {
-  private auth: Auth = inject(Auth);
+  public auth: Auth = inject(Auth);
   private http: HttpClient = inject(HttpClient);
   private apiUrl = 'https://meu-dinheiro-backend-production.up.railway.app/api/users';
   

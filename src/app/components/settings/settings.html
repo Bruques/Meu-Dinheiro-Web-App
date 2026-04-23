@@ -1,0 +1,56 @@
+<div class="settings-container">
+  
+  <a routerLink="/dashboard" class="btn-voltar">
+    <span class="seta">←</span> Dashboard
+  </a>
+
+  <div class="settings-header">
+    <h1>Configurações</h1>
+    <p>Personalize sua experiência no Meu Dinheiro</p>
+  </div>
+
+  <div class="settings-card">
+    <div class="card-title">
+      <span class="icon">💳</span>
+      <h2>Cartão de Crédito</h2>
+    </div>
+    <p class="card-subtitle">Ajuste as datas da sua fatura para a Inteligência Artificial prever seu fluxo de caixa corretamente.</p>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="fechamento">Dia de Fechamento</label>
+        <input 
+          type="number" 
+          id="fechamento" 
+          [(ngModel)]="diaFechamento" 
+          min="1" max="31" 
+          placeholder="Ex: 21">
+        <small>O dia em que a fatura vira para o mês seguinte.</small>
+      </div>
+
+      <div class="form-group">
+        <label for="vencimento">Dia de Vencimento</label>
+        <input 
+          type="number" 
+          id="vencimento" 
+          [(ngModel)]="diaVencimento" 
+          min="1" max="31" 
+          placeholder="Ex: 24">
+        <small>O dia em que você precisa pagar o boleto.</small>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button 
+        class="btn-salvar" 
+        (click)="salvarConfiguracoesCartao()" 
+        [disabled]="salvando">
+        {{ salvando ? 'Salvando...' : 'Salvar Datas' }}
+      </button>
+    </div>
+
+    <div *ngIf="mensagem" class="alert-box" [ngClass]="tipoMensagem">
+      {{ mensagem }}
+    </div>
+  </div>
+</div>
