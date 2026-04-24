@@ -1,4 +1,4 @@
-import { Component, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, ChangeDetectorRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -13,7 +13,7 @@ import { RouterLink } from '@angular/router';
   templateUrl: './settings.html',
   styleUrls: ['./settings.css']
 })
-export class SettingsComponent {
+export class SettingsComponent implements OnInit {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
@@ -25,8 +25,42 @@ export class SettingsComponent {
   diaVencimento: number = 24;
   
   salvando: boolean = false;
+  carregando: boolean = true;
+
   mensagem: string = '';
   tipoMensagem: 'sucesso' | 'erro' = 'sucesso';
+
+  ngOnInit() {
+    this.buscarConfiguracoes();
+  }
+
+  async buscarConfiguracoes() {
+    try {
+      const token = await this.authService.getToken();
+      if (!token) return;
+
+      const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+      const url = `${this.baseApiUrl}/users/config`;
+
+      this.http.get<any>(url, { headers }).subscribe({
+        next: (dados) => {
+          this.diaFechamento = dados.fechamento;
+          this.diaVencimento = dados.vencimento;
+          this.carregando = false;
+          this.cdr.detectChanges(); // Atualiza a tela com os novos números
+        },
+        error: (erro) => {
+          console.error('Erro ao buscar configurações', erro);
+          this.carregando = false;
+          this.cdr.detectChanges();
+        }
+      });
+    } catch (error) {
+      console.error('Erro de autenticação ao buscar dados:', error);
+      this.carregando = false;
+      this.cdr.detectChanges();
+    }
+  }
 
   async salvarConfiguracoesCartao() {
     // Validação básica
