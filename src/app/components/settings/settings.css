@@ -162,6 +162,42 @@
   transform: translateX(-4px); 
 }
 
+/* --- TELA DE LOADING --- */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px; /* Garante um bom espaço no meio da tela */
+  color: #666;
+}
+
+.loading-container p {
+  margin-top: 15px;
+  font-weight: 500;
+  font-size: 1.1rem;
+}
+
+/* O anel que vai girar */
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #e0e0e0; /* Cor do fundo do anel */
+  border-top-color: #2e7d32; /* Cor da ponta do anel (Verde do SaaS) */
+  border-radius: 50%; /* Deixa redondo */
+  animation: girar 1s linear infinite; /* Roda para sempre */
+}
+
+/* A animação mágica de girar 360 graus */
+@keyframes girar {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* Responsividade para o iPhone (seu requisito do backlog) */
 @media (max-width: 600px) {
   .form-row {
