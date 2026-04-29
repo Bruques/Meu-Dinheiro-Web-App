@@ -10,7 +10,7 @@ import { environment } from '../../environments/environment';
 export class AuthService {
   public auth: Auth = inject(Auth);
   private http: HttpClient = inject(HttpClient);
-  private apiUrl = 'https://meu-dinheiro-backend-fjdi.onrender.com/api/users';
+  private apiUrl = `${environment.apiUrl}/users`;
   
   // Fica observando se o usuário está logado ou não
   public readonly user$: Observable<User | null> = authState(this.auth);

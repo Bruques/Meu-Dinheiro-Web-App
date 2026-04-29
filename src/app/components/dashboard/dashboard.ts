@@ -26,6 +26,7 @@ export class DashboardComponent implements OnInit {
   // --- VARIÁVEIS DO MODAL ---
   isModalOpen = false;
   isEditModalOpen = false;
+  categoriasDoUsuario: any[] = [];
 
   // --- VARIÁVEIS DO DASHBOARD ---
   expenses: any[] = [];
@@ -64,33 +65,29 @@ export class DashboardComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.authService.user$.subscribe(user => {
-      if (!user) {
-        this.router.navigate(['/login']);
-      } else {
-        this.usuarioEmail = user.email;
-        this.usuarioFirebaseUid = user.uid; // Guarda o UID
-        this.verificarVínculoWhatsapp(user.uid); // Checa no servidor
-        this.carregarGastosDoMes();
-      }
-    });
+  // Unificamos a verificação de segurança e carregamento
+  this.authService.user$.subscribe(user => {
+    if (!user) {
+      this.router.navigate(['/login']);
+    } else {
+      this.usuarioEmail = user.email;
+      this.usuarioFirebaseUid = user.uid; 
+      
+      this.verificarVínculoWhatsapp(user.uid); 
+      this.carregarGastosDoMes();
 
-    // 1. O "SEGURANÇA": Verifica se o usuário está logado
-    this.authService.user$.subscribe(user => {
-      if (!user) {
-        this.router.navigate(['/login']); // Expulsa para o login
-      } else {
-        this.usuarioEmail = user.email;
-        this.carregarGastosDoMes(); // Se tem crachá, carrega os dados
-      }
-    });
+      // 2. AQUI É O PULO DO GATO! 
+      // Você chama a função que pega o seu app_user do banco e extrai as categorias
+      this.carregarCategoriasDoUsuario(user.uid); // ou user.uid, dependendo da sua API
+    }
+  });
 
-    // 2. O "OUVIDO DA IA": Escuta quando o modal salva um gasto
-    this.expenseService.expenseAdded$.subscribe(() => {
-      this.fecharModal(); // Desce o modal
-      this.carregarGastosDoMes(); // Atualiza a lista e o gráfico
-    });
-  }
+  // Escuta quando o modal salva um gasto
+  this.expenseService.expenseAdded$.subscribe(() => {
+    this.fecharModal(); 
+    this.carregarGastosDoMes(); 
+  });
+}
 
   // --- CONTROLE DO MODAL ---
   abrirModal() {
@@ -219,5 +216,19 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  
+  carregarCategoriasDoUsuario(uid: string | null) {
+    if (!uid) return;
+
+    this.backendService.getCategoriasDoUsuario(uid).subscribe({
+        next: (categoriasDoBanco) => {
+            this.categoriasDoUsuario = categoriasDoBanco;
+            this.cdr.detectChanges(); // Atualiza a tela
+        },
+        error: (err) => {
+            console.error('Erro ao buscar categorias do banco', err);
+            // Fallback caso a API falhe
+            this.categoriasDoUsuario = ["Alimentação", "Transporte", "Moradia", "Outros"];
+        }
+    });
+}
 }
