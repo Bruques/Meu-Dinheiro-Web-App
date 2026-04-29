@@ -561,6 +561,34 @@
   background: #1b5e20;
 }
 
+/* Container que centraliza o loading na tela */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #666;
+  font-weight: 500;
+}
+
+/* O Spinner (Bolinha girando) */
+.spinner {
+  width: 45px;
+  height: 45px;
+  border: 5px solid rgba(0, 0, 0, 0.1); /* Fundo cinza clarinho */
+  border-left-color: #36A2EB; /* Cor azul combinando com seu gráfico Chart.js */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+/* A Mágica do giro */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 /* Animações nativas */
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }

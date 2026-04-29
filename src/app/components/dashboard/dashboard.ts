@@ -38,6 +38,8 @@ export class DashboardComponent implements OnInit {
 
   usuarioEmail: string | null = '';
 
+  isLoading = false;
+
   // Variáveis novas para o WhatsApp
   usuarioFirebaseUid: string | null = null;
   temWhatsappVinculado: boolean = true; // Assumimos true até o servidor dizer que é false
@@ -65,29 +67,29 @@ export class DashboardComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-  // Unificamos a verificação de segurança e carregamento
-  this.authService.user$.subscribe(user => {
-    if (!user) {
-      this.router.navigate(['/login']);
-    } else {
-      this.usuarioEmail = user.email;
-      this.usuarioFirebaseUid = user.uid; 
-      
-      this.verificarVínculoWhatsapp(user.uid); 
+    // Unificamos a verificação de segurança e carregamento
+    this.authService.user$.subscribe(user => {
+      if (!user) {
+        this.router.navigate(['/login']);
+      } else {
+        this.usuarioEmail = user.email;
+        this.usuarioFirebaseUid = user.uid;
+
+        this.verificarVínculoWhatsapp(user.uid);
+        this.carregarGastosDoMes();
+
+        // 2. AQUI É O PULO DO GATO! 
+        // Você chama a função que pega o seu app_user do banco e extrai as categorias
+        this.carregarCategoriasDoUsuario(user.uid); // ou user.uid, dependendo da sua API
+      }
+    });
+
+    // Escuta quando o modal salva um gasto
+    this.expenseService.expenseAdded$.subscribe(() => {
+      this.fecharModal();
       this.carregarGastosDoMes();
-
-      // 2. AQUI É O PULO DO GATO! 
-      // Você chama a função que pega o seu app_user do banco e extrai as categorias
-      this.carregarCategoriasDoUsuario(user.uid); // ou user.uid, dependendo da sua API
-    }
-  });
-
-  // Escuta quando o modal salva um gasto
-  this.expenseService.expenseAdded$.subscribe(() => {
-    this.fecharModal(); 
-    this.carregarGastosDoMes(); 
-  });
-}
+    });
+  }
 
   // --- CONTROLE DO MODAL ---
   abrirModal() {
@@ -116,6 +118,8 @@ export class DashboardComponent implements OnInit {
 
   // --- BUSCA E MATEMÁTICA ---
   carregarGastosDoMes() {
+    this.isLoading = true;
+
     const mesJava = this.dataAtual.getMonth() + 1;
     const anoJava = this.dataAtual.getFullYear();
 
@@ -123,9 +127,14 @@ export class DashboardComponent implements OnInit {
       next: (dados) => {
         this.expenses = dados;
         this.calcularTotaisEGrafico();
+        this.isLoading = false;
         this.cdr.detectChanges();
       },
-      error: (err) => console.error('Erro ao buscar gastos do mês', err)
+      error: (err) => {
+        console.error('Erro ao buscar gastos do mês', err);
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -220,15 +229,15 @@ export class DashboardComponent implements OnInit {
     if (!uid) return;
 
     this.backendService.getCategoriasDoUsuario(uid).subscribe({
-        next: (categoriasDoBanco) => {
-            this.categoriasDoUsuario = categoriasDoBanco;
-            this.cdr.detectChanges(); // Atualiza a tela
-        },
-        error: (err) => {
-            console.error('Erro ao buscar categorias do banco', err);
-            // Fallback caso a API falhe
-            this.categoriasDoUsuario = ["Alimentação", "Transporte", "Moradia", "Outros"];
-        }
+      next: (categoriasDoBanco) => {
+        this.categoriasDoUsuario = categoriasDoBanco;
+        this.cdr.detectChanges(); // Atualiza a tela
+      },
+      error: (err) => {
+        console.error('Erro ao buscar categorias do banco', err);
+        // Fallback caso a API falhe
+        this.categoriasDoUsuario = ["Alimentação", "Transporte", "Moradia", "Saúde", "Lazer", "Educação", "Vestuário", "Outros"];
+      }
     });
-}
+  }
 }

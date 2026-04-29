@@ -21,8 +21,7 @@
       <span class="wa-icon">💬</span>
       <h3>Inteligência Artificial no WhatsApp</h3>
     </div>
-    <p class="wa-subtitle">Envie áudios ou textos com seus gastos diretamente pelo WhatsApp e veja-os aparecerem aqui!
-    </p>
+    <p class="wa-subtitle">Envie áudios ou textos com seus gastos diretamente pelo WhatsApp e veja-os aparecerem aqui!</p>
 
     <button *ngIf="!codigoGerado" (click)="vincularWhatsapp()" [disabled]="carregandoWhatsapp" class="btn-gerar-wa">
       {{ carregandoWhatsapp ? 'Gerando código...' : 'Vincular meu WhatsApp' }}
@@ -46,52 +45,57 @@
     <button class="nav-btn" (click)="mudarMes(1)">❯</button>
   </div>
 
-  <div class="summary-section" *ngIf="expenses.length > 0; else noData">
-    <div class="total-card">
-      <p>Total a Pagar no Mês</p>
-      <h3 class="total-value">R$ {{ totalMes | number:'1.2-2' }}</h3>
-    </div>
-
-    <div class="chart-container">
-      <canvas baseChart [data]="pieChartData" [options]="pieChartOptions" [type]="pieChartType">
-      </canvas>
-    </div>
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Buscando seus gastos...</p>
   </div>
 
-  <ng-template #noData>
-    <div class="empty-state">
-      <p>Nenhum gasto para este mês. Que paz! 🕊️</p>
+  <div *ngIf="!isLoading">
+    
+    <div class="summary-section" *ngIf="expenses.length > 0; else noData">
+      <div class="total-card">
+        <p>Total a Pagar no Mês</p>
+        <h3 class="total-value">R$ {{ totalMes | number:'1.2-2' }}</h3>
+      </div>
+
+      <div class="chart-container">
+        <canvas baseChart [data]="pieChartData" [options]="pieChartOptions" [type]="pieChartType"></canvas>
+      </div>
     </div>
-  </ng-template>
 
-  <div class="expense-list">
-    <div class="expense-card" *ngFor="let item of expenses">
-
-      <div class="card-header">
-        <h4 class="item-name">{{ item.name }}</h4>
-        <span class="item-value">R$ {{ item.value | number:'1.2-2' }}</span>
+    <ng-template #noData>
+      <div class="empty-state">
+        <p>Nenhum gasto para este mês. Que paz! 🕊️</p>
       </div>
+    </ng-template>
 
-      <div class="card-meta">
-        <div class="badges-group">
-          <span class="category-badge">{{ item.category }}</span>
-          <span class="type-text">{{ item.paymentType || '-' }}</span>
+    <div class="expense-list">
+      <div class="expense-card" *ngFor="let item of expenses">
+
+        <div class="card-header">
+          <h4 class="item-name">{{ item.name }}</h4>
+          <span class="item-value">R$ {{ item.value | number:'1.2-2' }}</span>
         </div>
-        <span class="date-badge">💸 Cobrança: {{ item.dataCobranca | date:'dd/MM/yyyy':'UTC' }}</span>
-      </div>
 
-      <div class="card-footer">
-        <div class="date-small">Comprado em: {{ item.date | date:'dd/MM/yyyy':'UTC' }}</div>
-        <div class="action-buttons">
-          <button class="action-btn edit-btn" (click)="iniciarEdicao(item)">✏️</button>
-          <button class="action-btn delete-btn" (click)="excluirGasto(item.id)">🗑️</button>
+        <div class="card-meta">
+          <div class="badges-group">
+            <span class="category-badge">{{ item.category }}</span>
+            <span class="type-text">{{ item.paymentType || '-' }}</span>
+          </div>
+          <span class="date-badge">💸 Cobrança: {{ item.dataCobranca | date:'dd/MM/yyyy':'UTC' }}</span>
         </div>
-      </div>
 
+        <div class="card-footer">
+          <div class="date-small">Comprado em: {{ item.date | date:'dd/MM/yyyy':'UTC' }}</div>
+          <div class="action-buttons">
+            <button class="action-btn edit-btn" (click)="iniciarEdicao(item)">✏️</button>
+            <button class="action-btn delete-btn" (click)="excluirGasto(item.id)">🗑️</button>
+          </div>
+        </div>
+
+      </div>
     </div>
-  </div>
-
-  <button class="fab-button" (click)="abrirModal()" *ngIf="!isModalOpen && !isEditModalOpen">
+  </div> <button class="fab-button" (click)="abrirModal()" *ngIf="!isModalOpen && !isEditModalOpen">
     <span class="fab-icon">+</span>
   </button>
 
@@ -157,18 +161,5 @@
       </div>
     </div>
   </div>
-</div>
 
-<button class="fab-button" (click)="abrirModal()" *ngIf="!isModalOpen && !isEditModalOpen">
-  <span class="fab-icon">+</span>
-</button>
-
-<div class="modal-overlay" *ngIf="isModalOpen" (click)="fecharModal()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h3>Novo Gasto com IA 🪄</h3>
-      <button class="close-btn" (click)="fecharModal()">✕</button>
-    </div>
-    <app-expense-input></app-expense-input>
-  </div>
 </div>
