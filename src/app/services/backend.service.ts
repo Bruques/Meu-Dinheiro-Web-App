@@ -9,7 +9,7 @@ export class BackendService {
   private http = inject(HttpClient);
   
   // Coloque a URL do seu Railway aqui depois, por enquanto usamos o localhost
-  private apiUrl = 'https://meu-dinheiro-backend-production.up.railway.app/api/users'; 
+  private apiUrl = 'https://meu-dinheiro-backend-fjdi.onrender.com/api/users'; 
 
   // Chama o Java enviando o UID e o Email do Firebase
   gerarCodigoWhatsapp(uid: string, email: string): Observable<string> {

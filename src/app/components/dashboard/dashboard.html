@@ -2,15 +2,12 @@
   <div class="brand-container">
     <h2>💸 MeuDinheiro</h2>
   </div>
-  
+
   <div class="user-container">
-    <div class="avatar avatar-clickable" 
-         *ngIf="usuarioEmail" 
-         routerLink="/settings"
-         title="Configurações da Conta">
+    <div class="avatar avatar-clickable" *ngIf="usuarioEmail" routerLink="/settings" title="Configurações da Conta">
       {{ usuarioEmail.charAt(0) | uppercase }}
     </div>
-    
+
     <button class="btn-logout" (click)="fazerLogout()">
       <span class="logout-icon">Sair</span>
     </button>
@@ -24,30 +21,25 @@
       <span class="wa-icon">💬</span>
       <h3>Inteligência Artificial no WhatsApp</h3>
     </div>
-    <p class="wa-subtitle">Envie áudios ou textos com seus gastos diretamente pelo WhatsApp e veja-os aparecerem aqui!</p>
-  
-    <button 
-      *ngIf="!codigoGerado" 
-      (click)="vincularWhatsapp()" 
-      [disabled]="carregandoWhatsapp"
-      class="btn-gerar-wa">
+    <p class="wa-subtitle">Envie áudios ou textos com seus gastos diretamente pelo WhatsApp e veja-os aparecerem aqui!
+    </p>
+
+    <button *ngIf="!codigoGerado" (click)="vincularWhatsapp()" [disabled]="carregandoWhatsapp" class="btn-gerar-wa">
       {{ carregandoWhatsapp ? 'Gerando código...' : 'Vincular meu WhatsApp' }}
     </button>
-  
+
     <div *ngIf="codigoGerado" class="wa-code-area">
       <p class="wa-instruction">Seu código de segurança único é:</p>
       <h1 class="wa-code">{{ codigoGerado }}</h1>
-      
-      <a [href]="'https://wa.me/553599861016?text=' + codigoGerado" 
-         target="_blank" 
-         class="btn-abrir-wa">
-         Abrir WhatsApp e Enviar Código 🚀
+
+      <a [href]="'https://wa.me/553599861016?text=' + codigoGerado" target="_blank" class="btn-abrir-wa">
+        Abrir WhatsApp e Enviar Código 🚀
       </a>
-      
+
       <p class="wa-footer-text">O card sumirá assim que o vínculo for confirmado.</p>
     </div>
   </div>
-  
+
   <div class="month-selector">
     <button class="nav-btn" (click)="mudarMes(-1)">❮</button>
     <h2 class="month-title">{{ nomeMesAtual }} {{ anoAtual }}</h2>
@@ -59,12 +51,9 @@
       <p>Total a Pagar no Mês</p>
       <h3 class="total-value">R$ {{ totalMes | number:'1.2-2' }}</h3>
     </div>
-    
+
     <div class="chart-container">
-      <canvas baseChart 
-        [data]="pieChartData" 
-        [options]="pieChartOptions" 
-        [type]="pieChartType">
+      <canvas baseChart [data]="pieChartData" [options]="pieChartOptions" [type]="pieChartType">
       </canvas>
     </div>
   </div>
@@ -77,56 +66,90 @@
 
   <div class="expense-list">
     <div class="expense-card" *ngFor="let item of expenses">
-      
-      <ng-container *ngIf="editandoId !== item.id">
-        
-        <div class="card-header">
-          <h4 class="item-name">{{ item.name }}</h4>
-          <span class="item-value">R$ {{ item.value | number:'1.2-2' }}</span>
+
+      <div class="card-header">
+        <h4 class="item-name">{{ item.name }}</h4>
+        <span class="item-value">R$ {{ item.value | number:'1.2-2' }}</span>
+      </div>
+
+      <div class="card-meta">
+        <div class="badges-group">
+          <span class="category-badge">{{ item.category }}</span>
+          <span class="type-text">{{ item.paymentType || '-' }}</span>
+        </div>
+        <span class="date-badge">💸 Cobrança: {{ item.dataCobranca | date:'dd/MM/yyyy':'UTC' }}</span>
+      </div>
+
+      <div class="card-footer">
+        <div class="date-small">Comprado em: {{ item.date | date:'dd/MM/yyyy':'UTC' }}</div>
+        <div class="action-buttons">
+          <button class="action-btn edit-btn" (click)="iniciarEdicao(item)">✏️</button>
+          <button class="action-btn delete-btn" (click)="excluirGasto(item.id)">🗑️</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <button class="fab-button" (click)="abrirModal()" *ngIf="!isModalOpen && !isEditModalOpen">
+    <span class="fab-icon">+</span>
+  </button>
+
+  <div class="modal-overlay" *ngIf="isModalOpen" (click)="fecharModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Novo Gasto com IA 🪄</h3>
+        <button class="close-btn" (click)="fecharModal()">✕</button>
+      </div>
+      <app-expense-input></app-expense-input>
+    </div>
+  </div>
+
+  <div class="modal-overlay" *ngIf="isEditModalOpen" (click)="cancelarEdicao()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Editar Gasto ✏️</h3>
+        <button class="close-btn" (click)="cancelarEdicao()">✕</button>
+      </div>
+
+      <div class="edit-form">
+        <div class="form-group">
+          <label>Nome do Item</label>
+          <input type="text" [(ngModel)]="gastoEmEdicao.name" placeholder="Ex: Mercado">
         </div>
 
-        <div class="card-meta">
-          <div class="badges-group">
-            <span class="category-badge">{{ item.category }}</span>
-            <span class="type-text">{{ item.paymentType || '-' }}</span>
-          </div>
-          <span class="date-badge">💸 Cobrança: {{ item.dataCobranca | date:'dd/MM/yyyy':'UTC' }}</span>
+        <div class="form-group">
+          <label>Valor (R$)</label>
+          <input type="number" [(ngModel)]="gastoEmEdicao.value" placeholder="0.00">
         </div>
-        
-        <div class="card-footer">
-          <div class="date-small">Comprado em: {{ item.date | date:'dd/MM/yyyy':'UTC' }}</div>
-          <div class="action-buttons">
-            <button class="action-btn edit-btn" (click)="iniciarEdicao(item)">✏️</button>
-            <button class="action-btn delete-btn" (click)="excluirGasto(item.id)">🗑️</button>
-          </div>
-        </div>
-        
-      </ng-container>
 
-      <ng-container *ngIf="editandoId === item.id">
-        <div class="edit-mode-grid">
-          <label>Item e Valor</label>
-          <div class="edit-row">
-            <input [(ngModel)]="gastoEmEdicao.name" placeholder="Item" class="edit-input" style="flex: 2;">
-            <input type="number" [(ngModel)]="gastoEmEdicao.value" placeholder="R$" class="edit-input" style="flex: 1;">
-          </div>
-          
-          <label>Categoria e Tipo</label>
-          <div class="edit-row">
-            <input [(ngModel)]="gastoEmEdicao.category" placeholder="Categoria" class="edit-input">
-            <input [(ngModel)]="gastoEmEdicao.paymentType" placeholder="Crédito, Pix..." class="edit-input">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Categoria</label>
+            <input type="text" [(ngModel)]="gastoEmEdicao.category">
           </div>
 
+          <div class="form-group">
+            <label>Pagamento</label>
+            <select [(ngModel)]="gastoEmEdicao.paymentType">
+              <option value="Crédito">Crédito</option>
+              <option value="Débito">Débito</option>
+              <option value="Pix">Pix</option>
+              <option value="Dinheiro">Dinheiro</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
           <label>Data da Compra</label>
-          <input [(ngModel)]="gastoEmEdicao.date" placeholder="yyyy-MM-dd" class="edit-input">
-          
-          <div class="edit-actions-buttons">
-            <button class="save-btn" (click)="salvarEdicao()">✅ Salvar</button>
-            <button class="cancel-btn" (click)="cancelarEdicao()">❌</button>
-          </div>
+          <input type="date" [(ngModel)]="gastoEmEdicao.date">
         </div>
-      </ng-container>
 
+        <div class="modal-actions">
+          <button class="btn-cancel" (click)="cancelarEdicao()">Cancelar</button>
+          <button class="btn-save" (click)="salvarEdicao()">Salvar Alterações</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>

@@ -25,6 +25,7 @@ Chart.register(...registerables);
 export class DashboardComponent implements OnInit {
   // --- VARIÁVEIS DO MODAL ---
   isModalOpen = false;
+  isEditModalOpen = false;
 
   // --- VARIÁVEIS DO DASHBOARD ---
   expenses: any[] = [];
@@ -159,21 +160,25 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+  // --- MÉTODOS DE EDIÇÃO E EXCLUSÃO ---
   iniciarEdicao(expense: any) {
     this.editandoId = expense.id;
-    this.gastoEmEdicao = { ...expense };
+    this.gastoEmEdicao = { ...expense }; // Copia os dados para não alterar direto na lista
+    this.isEditModalOpen = true; // 👈 Abre a modal
   }
 
   cancelarEdicao() {
     this.editandoId = null;
     this.gastoEmEdicao = {};
+    this.isEditModalOpen = false; // 👈 Fecha a modal
   }
 
   salvarEdicao() {
     if (this.editandoId) {
       this.expenseService.updateExpense(this.editandoId, this.gastoEmEdicao).subscribe(() => {
         this.editandoId = null;
-        this.carregarGastosDoMes();
+        this.isEditModalOpen = false; // 👈 Fecha a modal após salvar
+        this.carregarGastosDoMes(); // Recarrega a lista do banco
       });
     }
   }
@@ -213,4 +218,6 @@ export class DashboardComponent implements OnInit {
       });
     }
   }
+
+  
 }

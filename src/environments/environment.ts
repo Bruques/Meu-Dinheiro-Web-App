@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://meu-dinheiro-backend-production.up.railway.app/api' // Seu Java no Railway
+  apiUrl: 'https://meu-dinheiro-backend-fjdi.onrender.com/api' // Seu Java no Railway
 };

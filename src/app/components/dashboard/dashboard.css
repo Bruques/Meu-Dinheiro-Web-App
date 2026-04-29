@@ -478,6 +478,89 @@
   box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3); /* Coloca uma sombra verde */
 }
 
+/* --- ESTILOS DO FORMULÁRIO DA MODAL DE EDIÇÃO --- */
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding-top: 10px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form-group label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #555;
+}
+
+.form-group input, 
+.form-group select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  background-color: #f9f9f9;
+}
+
+.form-group input:focus, 
+.form-group select:focus {
+  outline: none;
+  border-color: #2e7d32;
+  background-color: #fff;
+  box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.2);
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+}
+
+.form-row .form-group {
+  flex: 1; /* Faz os dois campos dividirem o espaço 50/50 */
+}
+
+/* Botões da Modal */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.btn-cancel {
+  background: transparent;
+  border: none;
+  color: #666;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 10px 15px;
+  border-radius: 6px;
+}
+
+.btn-cancel:hover {
+  background: #f0f0f0;
+}
+
+.btn-save {
+  background: #2e7d32;
+  color: white;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 10px 20px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.btn-save:hover {
+  background: #1b5e20;
+}
+
 /* Animações nativas */
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }

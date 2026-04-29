@@ -18,7 +18,7 @@ export class SettingsComponent implements OnInit {
   private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
 
-  private baseApiUrl = 'https://meu-dinheiro-backend-production.up.railway.app/api'
+  private baseApiUrl = 'https://meu-dinheiro-backend-fjdi.onrender.com/api'
 
   // Valores padrões (depois podemos fazer um GET para buscar do banco ao abrir a tela)
   diaFechamento: number = 21;
