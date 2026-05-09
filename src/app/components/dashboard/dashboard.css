@@ -583,6 +583,43 @@
   margin-bottom: 15px;
 }
 
+/* --- ESTILOS DO FILTRO DE CATEGORIAS --- */
+.filter-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+  justify-content: center; /* Centraliza os botões */
+  padding: 0 10px;
+}
+
+.filter-chip {
+  background-color: #f0f0f0; /* Fundo cinza claro */
+  color: #555;
+  border: none;
+  border-radius: 20px; /* Deixa bem arredondado (estilo pílula) */
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Sombra bem levinha */
+}
+
+/* Efeito ao passar o mouse (se estiver no PC) */
+.filter-chip:hover {
+  background-color: #e0e0e0;
+  transform: translateY(-1px);
+}
+
+/* O ESTILO DO BOTÃO SELECIONADO */
+.filter-chip.active {
+  background-color: #36A2EB; /* Mesma cor azul do seu gráfico */
+  color: white;
+  box-shadow: 0 4px 8px rgba(54, 162, 235, 0.3); /* Sombra azulada */
+  transform: scale(1.05); /* Dá uma leve crescidinha para dar destaque */
+}
+
 /* A Mágica do giro */
 @keyframes spin {
   0% { transform: rotate(0deg); }

@@ -51,6 +51,16 @@
   </div>
 
   <div *ngIf="!isLoading">
+
+    <div class="filter-container" *ngIf="categoriasDisponiveis.length > 1">
+      <button 
+        *ngFor="let cat of categoriasDisponiveis" 
+        class="filter-chip" 
+        [class.active]="cat === categoriaSelecionada" 
+        (click)="selecionarFiltro(cat)">
+        {{ cat }}
+      </button>
+    </div>
     
     <div class="summary-section" *ngIf="expenses.length > 0; else noData">
       <div class="total-card">

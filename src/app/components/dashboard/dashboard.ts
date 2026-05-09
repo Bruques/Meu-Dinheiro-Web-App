@@ -36,6 +36,11 @@ export class DashboardComponent implements OnInit {
   editandoId: number | null = null;
   gastoEmEdicao: any = {};
 
+  // --- VARIÁVEIS DE FILTRO ---
+  todasDespesasDoMes: any[] = []; // Vai guardar a lista intocada que vem do banco
+  categoriaSelecionada: string = 'Todas'; // Controla qual botão de filtro está ativo
+  categoriasDisponiveis: string[] = [];
+
   usuarioEmail: string | null = '';
 
   isLoading = false;
@@ -125,8 +130,19 @@ export class DashboardComponent implements OnInit {
 
     this.expenseService.getExpensesByMonth(mesJava, anoJava).subscribe({
       next: (dados) => {
-        this.expenses = dados;
-        this.calcularTotaisEGrafico();
+        // 1. Guarda a cópia de segurança com TODOS os dados
+        this.todasDespesasDoMes = dados; 
+        
+        // 2. Sempre que mudar de mês, volta o filtro para "Todas"
+        this.categoriaSelecionada = 'Todas'; 
+        
+        // 3. Monta a lista inteligente de categorias (pega apenas as categorias que existem neste mês)
+        const categoriasSet = new Set(this.todasDespesasDoMes.map(g => g.category));
+        this.categoriasDisponiveis = ['Todas', ...Array.from(categoriasSet)];
+
+        // 4. Aplica o filtro (que vai preencher o this.expenses e atualizar o gráfico)
+        this.aplicarFiltro(); 
+        
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -239,5 +255,25 @@ export class DashboardComponent implements OnInit {
         this.categoriasDoUsuario = ["Alimentação", "Transporte", "Moradia", "Saúde", "Lazer", "Educação", "Vestuário", "Outros"];
       }
     });
+  }
+
+  // Esse método será chamado pelo HTML quando o usuário clicar em um botão de categoria
+  selecionarFiltro(categoria: string) {
+    this.categoriaSelecionada = categoria;
+    this.aplicarFiltro();
+  }
+
+  // Esse método faz a mágica de separar os dados
+  aplicarFiltro() {
+    if (this.categoriaSelecionada === 'Todas') {
+      // Se for "Todas", o expenses recebe a lista original completa
+      this.expenses = [...this.todasDespesasDoMes];
+    } else {
+      // Se for uma específica, filtramos a lista original
+      this.expenses = this.todasDespesasDoMes.filter(gasto => gasto.category === this.categoriaSelecionada);
+    }
+
+    // Como o this.expenses acabou de mudar, mandamos recalcular o Total (R$) e o Gráfico!
+    this.calcularTotaisEGrafico();
   }
 }
