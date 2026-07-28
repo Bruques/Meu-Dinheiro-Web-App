@@ -1,59 +1,28 @@
-# Meudinheirowebapp
+# MeuDinheiro — Web
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.6.
+Angular web client for MeuDinheiro, a personal finance tracker with WhatsApp-based, AI-parsed
+expense logging. Shares the same [Spring Boot backend](https://github.com/Bruques/Meu-Dinheiro-Backend)
+as the [iOS app](https://github.com/Bruques/MeuDinheiroiOS).
 
-## Development server
+## What it does
 
-To start a local development server, run:
+- Dashboard, expense entry, and account settings for the same expense-tracking data used on iOS.
+- Firebase Authentication for sign-in, with an HTTP interceptor attaching the auth token to API
+  requests automatically.
+
+## Tech stack
+
+Angular (standalone components) · TypeScript · Firebase Auth
+
+## Running locally
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Then open `http://localhost:4200`.
 
-## Code scaffolding
+## Status
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Secondary client for the MeuDinheiro backend — the iOS app is the primary, more actively
+developed surface of this product.
